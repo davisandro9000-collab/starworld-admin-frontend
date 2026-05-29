@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-admin-bg text-white font-body antialiased;
+  }
+  * { @apply border-sw-border; }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-heading font-semibold text-sm
+           bg-gradient-to-r from-gold to-gold-dim text-[#0B0F1E]
+           hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-heading font-semibold text-sm
+           border border-sw-border text-white/70 hover:border-gold/50 hover:text-white
+           active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-heading font-semibold text-sm
+           text-white/50 hover:text-white hover:bg-sw-card-2
+           active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-heading font-semibold text-sm
+           bg-loss/10 border border-loss/30 text-loss
+           hover:bg-loss/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-success {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-heading font-semibold text-sm
+           bg-win/10 border border-win/30 text-win
+           hover:bg-win/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-admin-card border border-sw-border rounded-xl;
+  }
+  .card-hover {
+    @apply card cursor-pointer hover:border-sw-border-2 hover:bg-sw-card-2 transition-all;
+  }
+
+  /* ── Inputs ── */
+  .input-sw {
+    @apply w-full bg-[#080B16] border border-sw-border rounded-lg px-3 py-2
+           text-white text-sm placeholder:text-white/30
+           focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20
+           transition-colors disabled:opacity-50;
+  }
+  select.input-sw {
+    @apply cursor-pointer;
+  }
+
+  /* ── Coin ── */
+  .coin-chip {
+    @apply inline-flex items-center gap-1.5 bg-gold/10 border border-gold/20
+           text-gold font-heading font-bold text-xs px-2.5 py-1 rounded-full;
+  }
+  .coin-dot {
+    @apply inline-block w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_4px_#FFD700];
+  }
+
+  /* ── Tier badges ── */
+  .badge-bronze   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#CD7F32]/20 text-[#CD7F32] border border-[#CD7F32]/30; }
+  .badge-silver   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#C0C0C0]/20 text-[#C0C0C0] border border-[#C0C0C0]/30; }
+  .badge-platinum { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#E5E4E2]/20 text-[#E5E4E2] border border-[#E5E4E2]/30; }
+
+  /* ── Status badges ── */
+  .badge-pending   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gold/10 text-gold border border-gold/20; }
+  .badge-credited  { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-win/10 text-win border border-win/20; }
+  .badge-rejected  { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-loss/10 text-loss border border-loss/20; }
+  .badge-banned    { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-loss/10 text-loss border border-loss/20; }
+  .badge-active    { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-win/10 text-win border border-win/20; }
+
+  /* ── Stat card ── */
+  .stat-card {
+    @apply card p-4 flex flex-col gap-1;
+  }
+  .stat-label { @apply text-white/40 text-xs uppercase tracking-wider font-body; }
+  .stat-value { @apply font-heading font-bold text-2xl text-white; }
+  .stat-delta-up   { @apply text-win text-xs font-medium; }
+  .stat-delta-down { @apply text-loss text-xs font-medium; }
+
+  /* ── Table ── */
+  .admin-table {
+    @apply w-full text-sm;
+  }
+  .admin-table th {
+    @apply text-left text-white/40 text-xs uppercase tracking-wider font-body
+           px-4 py-2 border-b border-sw-border;
+  }
+  .admin-table td {
+    @apply px-4 py-3 border-b border-sw-border/50 text-white/80;
+  }
+  .admin-table tr:last-child td { @apply border-b-0; }
+  .admin-table tbody tr:hover td { @apply bg-sw-card-2/30; }
+
+  /* ── Progress ── */
+  .progress-track { @apply w-full h-1.5 bg-sw-border rounded-full overflow-hidden; }
+  .progress-fill  { @apply h-full bg-gradient-to-r from-gold to-gold-dim rounded-full transition-all duration-500; }
+
+  /* ── Glass ── */
+  .glass {
+    @apply bg-admin-card/90 backdrop-blur-md border border-sw-border;
+  }
+
+  /* ── Gradient text ── */
+  .text-gold-gradient {
+    @apply bg-gradient-to-r from-gold to-gold-dim bg-clip-text text-transparent;
+  }
+
+  /* ── Page layout ── */
+  .admin-page { @apply p-6 max-w-7xl mx-auto; }
+  .section-title { @apply font-heading font-bold text-lg text-white; }
+  .section-header { @apply flex items-center justify-between mb-4; }
+
+  /* ── Divider ── */
+  .divider { @apply border-t border-sw-border my-4; }
+}
