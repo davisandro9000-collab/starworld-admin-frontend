@@ -1,7 +1,5 @@
-// src/components/layout/AdminLayout.tsx
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAdminAuthStore } from '../../stores/adminAuthStore';
 import { usePendingCount } from '../../hooks/useDeposits';
 import { adminLogout } from '../../api/auth.api';
@@ -100,7 +98,6 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* Main area – crucial: Outlet renders child routes */}
       <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>

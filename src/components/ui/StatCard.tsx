@@ -1,7 +1,14 @@
+import { cn } from '../../lib/utils';
+
 interface StatCardProps {
-  label: string; value: string | number
-  delta?: string; deltaUp?: boolean; icon?: string; className?: string
+  label: string;
+  value: string | number;
+  delta?: string;
+  deltaUp?: boolean;
+  icon?: string;
+  className?: string;
 }
+
 export default function StatCard({ label, value, delta, deltaUp, icon, className }: StatCardProps) {
   return (
     <div className={cn('stat-card', className)}>
@@ -12,5 +19,5 @@ export default function StatCard({ label, value, delta, deltaUp, icon, className
       <span className="stat-value">{typeof value === 'number' ? value.toLocaleString() : value}</span>
       {delta && <span className={deltaUp ? 'stat-delta-up' : 'stat-delta-down'}>{deltaUp ? '↑' : '↓'} {delta}</span>}
     </div>
-  )
+  );
 }

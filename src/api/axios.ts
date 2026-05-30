@@ -1,10 +1,9 @@
-// src/api/axios.ts (admin frontend)
 import axios from 'axios';
 import { API_BASE } from '../lib/constants';
 import { useAdminAuthStore } from '../stores/adminAuthStore';
 
 export const adminApi = axios.create({
-  baseURL: API_BASE,   // now dynamic: relative in prod, full URL in dev
+  baseURL: API_BASE,
   withCredentials: true,
 });
 
