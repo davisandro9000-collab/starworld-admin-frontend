@@ -1,11 +1,10 @@
-// src/api/axios.ts
+// src/api/axios.ts (admin frontend)
 import axios from 'axios';
+import { API_BASE } from '../lib/constants';
 import { useAdminAuthStore } from '../stores/adminAuthStore';
 
-const baseURL = import.meta.env.VITE_ADMIN_API_URL || 'http://localhost:3001/api/admin/v1';
-
 export const adminApi = axios.create({
-  baseURL,
+  baseURL: API_BASE,   // now dynamic: relative in prod, full URL in dev
   withCredentials: true,
 });
 

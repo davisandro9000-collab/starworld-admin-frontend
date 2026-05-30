@@ -1,0 +1,31 @@
+# netlify.toml (for admin frontend)
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Proxy user API (if admin frontend needs it – not typical, but optional)
+[[redirects]]
+  from = "/api/*"
+  to = "https://starworld-backend-production.up.railway.app/api/:splat"
+  status = 200
+  force = true
+
+# Proxy admin API
+[[redirects]]
+  from = "/api/admin/*"
+  to = "https://starworld-backend-production.up.railway.app/api/admin/:splat"
+  status = 200
+  force = true
+
+# Proxy Socket.IO (if admin uses real-time)
+[[redirects]]
+  from = "/socket.io/*"
+  to = "https://starworld-backend-production.up.railway.app/socket.io/:splat"
+  status = 200
+  force = true
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
