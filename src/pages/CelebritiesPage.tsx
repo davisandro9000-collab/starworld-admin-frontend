@@ -1,5 +1,3 @@
-// src/pages/CelebritiesPage.tsx
-
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +11,7 @@ import { PageHeader, EmptyState, ConfirmModal, InitialsAvatar } from '../compone
 import { getAdminCelebrities, createCelebrity, updateCelebrity, deleteCelebrity } from '../api/celebrities.api'
 import type { CelebPayload } from '../api/celebrities.api'
 import { useAdminNotifStore } from '../stores/adminNotifStore'
+import { placeholders } from '../lib/placeholders'
 
 const schema = z.object({
   name:     z.string().min(1, 'Required'),
@@ -53,7 +52,6 @@ export default function CelebritiesPage() {
     setModalOpen(true)
   }
 
-  // Auto-generate slug from name only on create
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('name', e.target.value)
     if (!editing) {
@@ -128,10 +126,12 @@ export default function CelebritiesPage() {
                 <tr key={c.id} className="border-b border-sw-border/40 hover:bg-sw-card-2 transition-colors">
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">
-                      {c.imageUrl
-                        ? <img src={c.imageUrl} alt={c.name} className="w-8 h-8 rounded-full object-cover" />
-                        : <InitialsAvatar name={c.name} size="sm" />
-                      }
+                      <img
+                        src={c.imageUrl || placeholders.celebrityAvatar(c.name)}
+                        alt={c.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                        onError={(e) => { e.currentTarget.src = placeholders.celebrityAvatar(c.name); }}
+                      />
                       <p className="font-heading font-semibold text-white text-sm">{c.name}</p>
                     </div>
                   </td>
@@ -155,7 +155,6 @@ export default function CelebritiesPage() {
         </div>
       )}
 
-      {/* Create / Edit modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? `Edit ${editing.name}` : 'Add Celebrity'}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input label="Name" error={errors.name?.message} {...register('name')} onChange={handleNameChange} />
@@ -180,7 +179,6 @@ export default function CelebritiesPage() {
         </form>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmModal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
