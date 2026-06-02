@@ -1,25 +1,36 @@
-import { adminApi } from './axios'
+import { adminApi } from './axios';
 
-export interface AdminPrize {
-  id: string
-  userId: string
-  username: string
-  email: string
-  prizeType: string
-  prizeLabel: string
-  code: string
-  status: 'pending' | 'delivered' | 'failed'
-  deliveredAt?: string
-  createdAt: string
-}
+export const getPendingPrizes = async () => {
+  const { data } = await adminApi.get('/prizes/pending');
+  return data;
+};
 
-export async function getPendingPrizes(): Promise<AdminPrize[]> {
-  const { data } = await adminApi.get<AdminPrize[]>('/admin/prizes?status=pending')
-  return data
-}
-export async function markPrizeDelivered(id: string): Promise<void> {
-  await adminApi.post(`/admin/prizes/${id}/deliver`)
-}
-export async function markPrizeFailed(id: string, reason: string): Promise<void> {
-  await adminApi.post(`/admin/prizes/${id}/fail`, { reason })
-}
+export const getAllPrizes = async () => {
+  const { data } = await adminApi.get('/prizes');
+  return data.prizes;
+};
+
+export const createPrize = async (payload: any) => {
+  const { data } = await adminApi.post('/prizes', payload);
+  return data.prize;
+};
+
+export const updatePrize = async (id: string, payload: any) => {
+  const { data } = await adminApi.put(`/prizes/${id}`, payload);
+  return data.prize;
+};
+
+export const deletePrize = async (id: string) => {
+  const { data } = await adminApi.delete(`/prizes/${id}`);
+  return data;
+};
+
+export const markPrizeDelivered = async (id: string) => {
+  const { data } = await adminApi.post(`/prizes/${id}/deliver`);
+  return data;
+};
+
+export const markPrizeFailed = async (id: string, reason: string) => {
+  const { data } = await adminApi.post(`/prizes/${id}/fail`, { reason });
+  return data;
+};

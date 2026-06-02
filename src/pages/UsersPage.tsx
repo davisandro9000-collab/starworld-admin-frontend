@@ -1,85 +1,86 @@
-// src/pages/UsersPage.tsx
+import { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../lib/utils';
+import { Button } from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
+import StatCard from '../components/ui/StatCard';
+import Spinner from '../components/ui/Spinner';
+import Input from '../components/ui/Input';
+import { PageHeader, EmptyState, InitialsAvatar, ConfirmModal } from '../components/ui/adminHelpers';
+import { useUserSearch, useUserDetail, useGrantCoins, useBanUser, useUnbanUser } from '../hooks/useUsers';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useState } from 'react'
-import { formatDistanceToNow } from 'date-fns'
-import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '../lib/utils'
-import { Button } from '../components/ui/Button'
-import Badge from '../components/ui/Badge'
-import StatCard from '../components/ui/StatCard'
-import Spinner from '../components/ui/Spinner'
-import Input from '../components/ui/Input'
-import { PageHeader, EmptyState, InitialsAvatar, ConfirmModal } from '../components/ui/adminHelpers'
-import { useUserSearch, useUserDetail, useGrantCoins, useBanUser, useUnbanUser } from '../hooks/useUsers'
-import { useAdminNotifStore } from '../stores/adminNotifStore'
-import { useQueryClient } from '@tanstack/react-query'
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  coinBalance: number;
+  tier: { slug: string };
+  isBanned: boolean;
+  createdAt: string;
+};
 
 export default function UsersPage() {
-  const { push } = useAdminNotifStore()
-  const qc = useQueryClient()
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [grantAmount, setGrantAmount] = useState('')
-  const [grantReason, setGrantReason] = useState('')
-  const [banReason, setBanReason] = useState('')
-  const [banOpen, setBanOpen] = useState(false)
-  const [unbanOpen, setUnbanOpen] = useState(false)
+  const qc = useQueryClient();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [grantAmount, setGrantAmount] = useState('');
+  const [grantReason, setGrantReason] = useState('');
+  const [banReason, setBanReason] = useState('');
+  const [banOpen, setBanOpen] = useState(false);
+  const [unbanOpen, setUnbanOpen] = useState(false);
 
-  // useUserSearch takes 0 args — exposes q and search() internally
-  const { q, search, data: searchResult, isLoading } = useUserSearch()
-  const users = searchResult?.users ?? []
+  const { q, search, data: searchResult, isLoading } = useUserSearch();
+  const users = (searchResult?.users as User[]) ?? [];
 
-  const { data: detail, isLoading: detailLoading } = useUserDetail(selectedId)
+  const { data: detail, isLoading: detailLoading } = useUserDetail(selectedId);
 
-  const grantMutation = useGrantCoins()
-  const banMutation = useBanUser()
-  const unbanMutation = useUnbanUser()
+  const grantMutation = useGrantCoins();
+  const banMutation = useBanUser();
+  const unbanMutation = useUnbanUser();
 
   const handleGrant = () => {
-    if (!selectedId || !grantAmount) return
+    if (!selectedId || !grantAmount) return;
     grantMutation.mutate(
       { id: selectedId, amount: Number(grantAmount), reason: grantReason },
       {
         onSuccess: () => {
-          qc.invalidateQueries({ queryKey: ['admin-user', selectedId] })
-          setGrantAmount('')
-          setGrantReason('')
+          qc.invalidateQueries({ queryKey: ['admin-user', selectedId] });
+          setGrantAmount('');
+          setGrantReason('');
         },
-        onError: () => push({ title: 'Grant failed', body: 'Server error', variant: 'error' }),
       }
-    )
-  }
+    );
+  };
 
   const handleBan = () => {
-    if (!selectedId) return
+    if (!selectedId) return;
     banMutation.mutate(
       { id: selectedId, reason: banReason },
       {
         onSuccess: () => {
-          qc.invalidateQueries({ queryKey: ['admin-user', selectedId] })
-          setBanOpen(false)
-          setBanReason('')
+          qc.invalidateQueries({ queryKey: ['admin-user', selectedId] });
+          setBanOpen(false);
+          setBanReason('');
         },
-        onError: () => push({ title: 'Ban failed', body: 'Server error', variant: 'error' }),
       }
-    )
-  }
+    );
+  };
 
   const handleUnban = () => {
-    if (!selectedId) return
+    if (!selectedId) return;
     unbanMutation.mutate(selectedId, {
       onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['admin-user', selectedId] })
-        setUnbanOpen(false)
+        qc.invalidateQueries({ queryKey: ['admin-user', selectedId] });
+        setUnbanOpen(false);
       },
-      onError: () => push({ title: 'Unban failed', body: 'Server error', variant: 'error' }),
-    })
-  }
+    });
+  };
 
   return (
     <div className="admin-page">
       <PageHeader title="Users" subtitle="Search, inspect, and manage user accounts" />
 
-      {/* Search — uses search() from the hook, q as controlled value */}
       <div className="max-w-md mb-6">
         <Input
           placeholder="Search username or email… (min 2 chars)"
@@ -88,9 +89,7 @@ export default function UsersPage() {
         />
       </div>
 
-      {/* Table + drawer layout */}
       <div className="flex gap-4 min-h-0">
-        {/* Table */}
         <div className="flex-1 min-w-0 overflow-x-auto">
           {isLoading ? (
             <div className="flex justify-center pt-16"><Spinner size="md" /></div>
@@ -104,17 +103,14 @@ export default function UsersPage() {
               <thead>
                 <tr>
                   {['User', 'Tier', 'Balance', 'Status', 'Joined', ''].map(h => (
-                    <th
-                      key={h}
-                      className="font-body text-white/40 text-xs font-medium text-left px-3 py-2 border-b border-sw-border"
-                    >
+                    <th key={h} className="font-body text-white/40 text-xs font-medium text-left px-3 py-2 border-b border-sw-border">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
+                {users.map((u: User) => (
                   <tr
                     key={u.id}
                     onClick={() => setSelectedId(u.id)}
@@ -132,13 +128,13 @@ export default function UsersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-3"><Badge variant={u.tier} /></td>
+                    <td className="px-3 py-3"><Badge variant={u.tier?.slug as any} /></td>
                     <td className="px-3 py-3">
                       <span className="coin-chip text-xs">
                         <span className="coin-dot" />{u.coinBalance?.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-3 py-3"><Badge variant={u.banned ? 'banned' : 'active'} /></td>
+                    <td className="px-3 py-3"><Badge variant={u.isBanned ? 'banned' : 'active' as any} /></td>
                     <td className="px-3 py-3 font-body text-white/40 text-xs">
                       {formatDistanceToNow(new Date(u.createdAt), { addSuffix: true })}
                     </td>
@@ -152,7 +148,6 @@ export default function UsersPage() {
           )}
         </div>
 
-        {/* Slide-out drawer */}
         <AnimatePresence>
           {selectedId && (
             <motion.div
@@ -166,7 +161,6 @@ export default function UsersPage() {
                 <div className="flex justify-center pt-10"><Spinner size="md" /></div>
               ) : (
                 <>
-                  {/* Header */}
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <InitialsAvatar name={detail.username} size="lg" />
@@ -174,20 +168,14 @@ export default function UsersPage() {
                         <p className="font-heading font-bold text-white text-lg">{detail.username}</p>
                         <p className="font-body text-white/40 text-xs">{detail.email}</p>
                         <div className="flex gap-2 mt-1">
-                          <Badge variant={detail.tier} />
-                          <Badge variant={detail.banned ? 'banned' : 'active'} />
+                          <Badge variant={detail.tier?.slug as any} />
+                          <Badge variant={detail.isBanned ? 'banned' : 'active' as any} />
                         </div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => setSelectedId(null)}
-                      className="text-white/30 hover:text-white text-lg leading-none"
-                    >
-                      ×
-                    </button>
+                    <button onClick={() => setSelectedId(null)} className="text-white/30 hover:text-white text-lg leading-none">×</button>
                   </div>
 
-                  {/* Stats */}
                   <div className="grid grid-cols-2 gap-2">
                     <StatCard label="Total Deposited" value={`$${detail.totalDepositsUsd ?? 0}`} />
                     <StatCard label="Games Played"    value={detail.totalGamesPlayed ?? 0} />
@@ -195,13 +183,9 @@ export default function UsersPage() {
                     <StatCard label="Referrals"       value={detail.referralCount ?? 0} />
                   </div>
 
-                  {/* Coin history */}
                   <Section title="Coin History">
-                    {(detail.coinHistory ?? []).slice(0, 10).map((e, i) => (
-                      <div
-                        key={i}
-                        className="flex justify-between items-center py-1.5 border-b border-sw-border/40 last:border-0"
-                      >
+                    {(detail.coinHistory ?? []).slice(0, 10).map((e: any, i: number) => (
+                      <div key={i} className="flex justify-between items-center py-1.5 border-b border-sw-border/40 last:border-0">
                         <p className="font-body text-white/60 text-xs truncate flex-1">{e.reason}</p>
                         <span className={cn('font-heading font-bold text-xs ml-2', e.amount > 0 ? 'text-win' : 'text-loss')}>
                           {e.amount > 0 ? '+' : ''}{e.amount}
@@ -210,53 +194,21 @@ export default function UsersPage() {
                     ))}
                   </Section>
 
-                  {/* Referred users */}
-                  {(detail.referredUsers ?? []).length > 0 && (
-                    <Section title="Referred Users">
-                      {(detail.referredUsers ?? []).slice(0, 5).map((r) => (
-                        <div key={r.id} className="flex justify-between items-center py-1.5">
-                          <p className="font-body text-white/60 text-xs">{r.username}</p>
-                          <Badge variant={r.activated ? 'active' : 'pending'} />
-                        </div>
-                      ))}
-                    </Section>
-                  )}
-
-                  {/* Grant coins */}
                   <Section title="Grant Coins">
                     <div className="flex flex-col gap-2">
-                      <Input
-                        placeholder="Amount"
-                        type="number"
-                        value={grantAmount}
-                        onChange={e => setGrantAmount(e.target.value)}
-                      />
-                      <Input
-                        placeholder="Reason (e.g. Support compensation)"
-                        value={grantReason}
-                        onChange={e => setGrantReason(e.target.value)}
-                      />
-                      <Button
-                        variant="gold"
-                        onClick={handleGrant}
-                        loading={grantMutation.isPending}
-                        disabled={!grantAmount}
-                      >
+                      <Input placeholder="Amount" type="number" value={grantAmount} onChange={e => setGrantAmount(e.target.value)} />
+                      <Input placeholder="Reason" value={grantReason} onChange={e => setGrantReason(e.target.value)} />
+                      <Button variant="gold" onClick={handleGrant} loading={grantMutation.isPending} disabled={!grantAmount}>
                         Grant Coins
                       </Button>
                     </div>
                   </Section>
 
-                  {/* Ban / Unban */}
                   <Section title="Account Actions">
-                    {detail.banned ? (
-                      <Button variant="success" onClick={() => setUnbanOpen(true)} className="w-full">
-                        Unban User
-                      </Button>
+                    {detail.isBanned ? (
+                      <Button variant="success" onClick={() => setUnbanOpen(true)} className="w-full">Unban User</Button>
                     ) : (
-                      <Button variant="danger" onClick={() => setBanOpen(true)} className="w-full">
-                        Ban User
-                      </Button>
+                      <Button variant="danger" onClick={() => setBanOpen(true)} className="w-full">Ban User</Button>
                     )}
                   </Section>
                 </>
@@ -266,7 +218,6 @@ export default function UsersPage() {
         </AnimatePresence>
       </div>
 
-      {/* Ban modal */}
       <ConfirmModal
         open={banOpen}
         onClose={() => setBanOpen(false)}
@@ -277,15 +228,9 @@ export default function UsersPage() {
         variant="danger"
         loading={banMutation.isPending}
       >
-        <Input
-          label="Reason"
-          placeholder="e.g. Fraud, abuse of platform"
-          value={banReason}
-          onChange={e => setBanReason(e.target.value)}
-        />
+        <Input label="Reason" placeholder="e.g. Fraud, abuse" value={banReason} onChange={e => setBanReason(e.target.value)} />
       </ConfirmModal>
 
-      {/* Unban modal */}
       <ConfirmModal
         open={unbanOpen}
         onClose={() => setUnbanOpen(false)}
@@ -297,16 +242,14 @@ export default function UsersPage() {
         loading={unbanMutation.isPending}
       />
     </div>
-  )
+  );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="font-heading font-semibold text-white/50 text-xs uppercase tracking-wider mb-2">
-        {title}
-      </p>
+      <p className="font-heading font-semibold text-white/50 text-xs uppercase tracking-wider mb-2">{title}</p>
       {children}
     </div>
-  )
+  );
 }

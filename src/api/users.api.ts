@@ -1,40 +1,55 @@
-import { adminApi } from './axios'
+import { adminApi } from './axios';
 
-export interface AdminUserDetail {
-  id: string
-  username: string
-  email: string
-  tier: 'bronze' | 'silver' | 'platinum'
-  coinBalance: number
-  banned: boolean
-  bannedReason?: string
-  emailVerified: boolean
-  referralCode: string
-  referralCount: number
-  payoutUnlocked: boolean
-  totalDepositsUsd: number
-  totalGamesPlayed: number
-  totalGamesWon: number
-  createdAt: string
-  coinHistory:  Array<{ id: string; amount: number; reason: string; createdAt: string }>
-  gameHistory:  Array<{ id: string; gameType: string; won: boolean; coinsEarned: number; createdAt: string }>
-  referredUsers: Array<{ id: string; username: string; tier: string; activated: boolean }>
+export interface AdminUser {
+  id: string;
+  username: string;
+  email: string;
+  displayName?: string;
+  avatarUrl?: string;
+  coinBalance: number;
+  tier: { id: string; slug: string; name: string; colorHex: string };
+  isBanned: boolean;
+  banReason?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export async function searchUsers(q: string, page = 1): Promise<{ users: AdminUserDetail[]; total: number }> {
-  const { data } = await adminApi.get('/admin/users', { params: { q, page } })
-  return data
+export interface UserDetail extends AdminUser {
+  deposits?: any[];
+  coinTransactions?: any[];
+  totalDepositsUsd?: number;
+  totalGamesPlayed?: number;
+  totalGamesWon?: number;
+  referralCount?: number;
+  coinHistory?: { amount: number; reason: string; createdAt: string }[];
+  referredUsers?: { id: string; username: string; activated: boolean }[];
 }
-export async function getAdminUser(id: string): Promise<AdminUserDetail> {
-  const { data } = await adminApi.get<AdminUserDetail>(`/admin/users/${id}`)
-  return data
+
+export async function searchUsers(query: string, page = 1, limit = 20) {
+  const params = new URLSearchParams();
+  if (query) params.append('search', query);
+  params.append('page', String(page));
+  params.append('limit', String(limit));
+  const { data } = await adminApi.get(`/users?${params.toString()}`);
+  return data; // { users, total, page, totalPages }
 }
-export async function grantCoins(id: string, amount: number, reason: string): Promise<void> {
-  await adminApi.post(`/admin/users/${id}/grant-coins`, { amount, reason })
+
+export async function getUserById(id: string): Promise<UserDetail> {
+  const { data } = await adminApi.get(`/users/${id}`);
+  return data.user;
 }
-export async function banUser(id: string, reason: string): Promise<void> {
-  await adminApi.post(`/admin/users/${id}/ban`, { reason })
+
+export async function grantCoins(userId: string, amount: number, reason: string) {
+  const { data } = await adminApi.post(`/users/${userId}/grant-coins`, { amount, reason });
+  return data;
 }
-export async function unbanUser(id: string): Promise<void> {
-  await adminApi.post(`/admin/users/${id}/unban`)
+
+export async function banUser(userId: string, reason: string) {
+  const { data } = await adminApi.post(`/users/${userId}/ban`, { reason });
+  return data;
+}
+
+export async function unbanUser(userId: string) {
+  const { data } = await adminApi.post(`/users/${userId}/unban`);
+  return data;
 }

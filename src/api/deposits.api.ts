@@ -1,45 +1,26 @@
-import { adminApi } from './axios'
+import { adminApi } from './axios';
 
-export type DepositStatus = 'pending' | 'credited' | 'rejected'
-export type DepositMethod = 'BTC' | 'ETH' | 'USDT_TRC20' | 'BNB' | 'amazon' | 'google_play' | 'apple' | 'steam'
+export const getPendingDeposits = async () => {
+  const { data } = await adminApi.get('/deposits/pending');
+  return data.deposits;
+};
 
-export interface AdminDeposit {
-  id: string
-  userId: string
-  username: string
-  email: string
-  userTier: 'bronze' | 'silver' | 'platinum'
-  userCoinBalance: number
-  method: DepositMethod
-  txHash?: string
-  giftCardDigits?: string
-  amountUsd?: number
-  coinsAwarded?: number
-  status: DepositStatus
-  processedBy?: string
-  processedAt?: string
-  rejectionReason?: string
-  createdAt: string
-}
+export const getPendingCount = async () => {
+  const { data } = await adminApi.get('/deposits/pending-count');
+  return data.count;
+};
 
-export interface CreditPayload  { coinsAwarded: number }
-export interface RejectPayload  { reason: string }
+export const getDepositHistory = async (params?: { status?: string; page?: number }) => {
+  const { data } = await adminApi.get('/deposits/history', { params });
+  return data;
+};
 
-export async function getPendingDeposits(): Promise<AdminDeposit[]> {
-  const { data } = await adminApi.get<AdminDeposit[]>('/admin/deposits/pending')
-  return data
-}
-export async function getPendingCount(): Promise<{ count: number }> {
-  const { data } = await adminApi.get<{ count: number }>('/admin/deposits/pending-count')
-  return data
-}
-export async function getDepositHistory(params?: { status?: string; page?: number }): Promise<{ deposits: AdminDeposit[]; total: number }> {
-  const { data } = await adminApi.get('/admin/deposits', { params })
-  return data
-}
-export async function creditDeposit(id: string, payload: CreditPayload): Promise<void> {
-  await adminApi.post(`/admin/deposits/${id}/credit`, payload)
-}
-export async function rejectDeposit(id: string, payload: RejectPayload): Promise<void> {
-  await adminApi.post(`/admin/deposits/${id}/reject`, payload)
-}
+export const creditDeposit = async (id: string, payload: { coinsAwarded: number }) => {
+  const { data } = await adminApi.post(`/deposits/${id}/credit`, payload);
+  return data;
+};
+
+export const rejectDeposit = async (id: string, payload: { reason: string }) => {
+  const { data } = await adminApi.post(`/deposits/${id}/reject`, payload);
+  return data;
+};
