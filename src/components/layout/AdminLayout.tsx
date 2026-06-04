@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/admin/tickets',       icon: '🎟️', label: 'Tickets',       badge: false },
   { to: '/admin/tiers',         icon: '🏅', label: 'Tiers',         badge: false },
   { to: '/admin/audit',         icon: '📋', label: 'Audit Log',     badge: false },
+  { to: '/admin/promotions',    icon: '🎯', label: 'Promotions',    badge: false },  // <-- ADDED
 ];
 
 export default function AdminLayout() {
@@ -34,7 +35,6 @@ export default function AdminLayout() {
 
   return (
     <div className="flex h-screen bg-admin-bg overflow-hidden">
-      {/* Sidebar */}
       <aside className={cn('flex flex-col flex-shrink-0 bg-admin-sidebar border-r border-sw-border transition-all duration-200', sideW)}>
         <div className="flex items-center gap-3 px-4 py-4 border-b border-sw-border min-h-[56px]">
           <span className="text-xl flex-shrink-0">⭐</span>

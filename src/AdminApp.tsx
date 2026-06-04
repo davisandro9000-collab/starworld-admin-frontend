@@ -16,6 +16,7 @@ import CelebritiesPage from './pages/CelebritiesPage'
 import TicketsPage from './pages/TicketsPage'
 import TiersPage from './pages/TiersPage'
 import AuditLogPage from './pages/AuditLogPage'
+import PromotionsPage from './pages/PromotionsPage';
 
 export default function AdminApp() {
   return (
@@ -39,6 +40,7 @@ export default function AdminApp() {
             <Route path="tickets"       element={<TicketsPage />} />
             <Route path="tiers"         element={<TiersPage />} />
             <Route path="audit"         element={<AuditLogPage />} />
+            <Route path="promotions" element={<PromotionsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/admin/login" replace />} />
         </Routes>
