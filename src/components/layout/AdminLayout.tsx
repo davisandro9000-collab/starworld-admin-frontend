@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/admin/tiers',         icon: '🏅', label: 'Tiers',         badge: false },
   { to: '/admin/audit',         icon: '📋', label: 'Audit Log',     badge: false },
   { to: '/admin/promotions',    icon: '🎯', label: 'Promotions',    badge: false },  // <-- ADDED
+  { to: '/admin/football', icon: '⚽', label: 'Football', badge: false },
 ];
 
 export default function AdminLayout() {
