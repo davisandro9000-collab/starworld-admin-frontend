@@ -18,6 +18,9 @@ import TiersPage from './pages/TiersPage'
 import AuditLogPage from './pages/AuditLogPage'
 import PromotionsPage from './pages/PromotionsPage';
 import FootballAdminPage from './pages/FootballAdminPage';
+import ManagePredictionGamesPage from './pages/ManagePredictionGamesPage';
+import ManageTicketListingsPage from './pages/ManageTicketListingsPage';
+import ManagePlayerStatsPage from './pages/ManagePlayerStatsPage';
 
 export default function AdminApp() {
   return (
@@ -43,6 +46,9 @@ export default function AdminApp() {
             <Route path="audit"         element={<AuditLogPage />} />
             <Route path="promotions" element={<PromotionsPage />} />
             <Route path="football" element={<FootballAdminPage />} />
+            <Route path="football/prediction-games" element={<ManagePredictionGamesPage />} />
+            <Route path="football/ticket-listings" element={<ManageTicketListingsPage />} />
+            <Route path="football/player-stats" element={<ManagePlayerStatsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/admin/login" replace />} />
         </Routes>

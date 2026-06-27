@@ -15,8 +15,11 @@ const NAV_ITEMS = [
   { to: '/admin/tickets',       icon: '🎟️', label: 'Tickets',       badge: false },
   { to: '/admin/tiers',         icon: '🏅', label: 'Tiers',         badge: false },
   { to: '/admin/audit',         icon: '📋', label: 'Audit Log',     badge: false },
-  { to: '/admin/promotions',    icon: '🎯', label: 'Promotions',    badge: false },  // <-- ADDED
-  { to: '/admin/football', icon: '⚽', label: 'Football', badge: false },
+  { to: '/admin/promotions',    icon: '🎯', label: 'Promotions',    badge: false },
+  { to: '/admin/football',      icon: '⚽',  label: 'World Cup Admin', badge: false },
+  // New pages for managing predictions and tickets
+  { to: '/admin/football/prediction-games', icon: '🎲', label: 'Prediction Games', badge: false },
+  { to: '/admin/football/ticket-listings',  icon: '🎫', label: 'Ticket Listings',  badge: false },
 ];
 
 export default function AdminLayout() {

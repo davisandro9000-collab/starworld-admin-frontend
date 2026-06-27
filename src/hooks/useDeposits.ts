@@ -31,7 +31,7 @@ export function useCreditDeposit() {
   const push = useAdminNotifStore(s => s.push)
   return useMutation({
     mutationFn: ({ id, coins }: { id: string; coins: number }) =>
-      creditDeposit(id, { coinsAwarded: coins }),
+      creditDeposit(id, { coinsToAward: coins }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-deposits-pending'] })
       qc.invalidateQueries({ queryKey: ['admin-deposits-pending-count'] })
